@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/testfixture';
 import { testUsers } from '../data/testUsers';
 import { ProductPage } from '../pages/ProductPage';
-import { invalidLoginData } from '../data/invalidloginData';  
+import { invalidLoginData } from '../data/invalidLoginData';
 
 for (const data of invalidLoginData) {
     test(`Should display error message when login with invalid credentials: ${data.scenario}`, async ({ loginPage }) => {
