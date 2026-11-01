@@ -25,9 +25,12 @@ export class CartPage {
         await this.checkoutButton.click();
     }
 
-    async removeProduct() {
-        await this.removeButton.click();
+    async removeProduct(productName?: string) {
+        if( productName){
+            const productId = productName.toLowerCase().replaceAll(' ', '-');
+            await this.page.locator(`#remove-${productId}`).click();
+        } else {
+            await this.removeButton.click();
+        }
     }
-
-
 }
