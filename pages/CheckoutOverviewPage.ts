@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
  
 export class CheckoutOverviewPage {
     readonly page: Page;
@@ -28,4 +28,14 @@ export class CheckoutOverviewPage {
     async cancelCheckout() {
         await this.cancelButton.click();
     }
+
+    async getOrderSummary() {
+    await expect(this.itemTotal).toBeVisible();
+
+    return {
+        subtotal: await this.itemTotal.innerText(),
+        tax: await this.tax.innerText(),
+        total: await this.total.innerText()
+    };
+}
 }   

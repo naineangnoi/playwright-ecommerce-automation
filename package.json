@@ -18,6 +18,10 @@
   "homepage": "https://github.com/naineangnoi/playwright-ecommerce-automation#readme",
   "devDependencies": {
     "@playwright/test": "^1.64.0",
-    "@types/node": "^26.6.5"
+    "@types/node": "^26.6.6",
+    "@types/pdf-parse": "^1.1.5",
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^6.5.438",
+    "typescript": "^7.0.2"
   }
 }
