@@ -10,6 +10,7 @@ export class ProductPage {
     readonly priceSortDropdown: Locator;
     readonly productPrices: Locator;
     readonly cartLink: Locator;
+    readonly backpackProductName: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -21,7 +22,17 @@ export class ProductPage {
         this.priceSortDropdown = page.locator('[data-test="product-sort-container"]');
         this.productPrices = page.locator('.inventory_item_price');
         this.cartLink = page.locator('.shopping_cart_link');
+        this.backpackProductName = page.getByRole('button', { name: 'View details for Sauce Labs Backpack'}).first();
     }
+
+    getProductPriceLocator(productName: string): Locator {
+    return this.page
+        .locator('.inventory_item')
+        .filter({
+            has: this.page.getByText(productName, { exact: true })
+        })
+        .locator('.inventory_item_price');
+}
 
     async logout() {
         await this.menuButton.click();
@@ -39,5 +50,26 @@ export class ProductPage {
 
     async viewCart() {
         await this.cartLink.click();    
+    }   
+
+    async getProductPrices(productName: string): Promise<number[]> {
+        const productPrices = await this.productPrices.all();
+        const prices: number[] = [];
+
+        for (const price of productPrices) {
+            const text = await price.textContent();
+            if (text) {
+                const numericPrice = parseFloat(text.replace('$', ''));
+                prices.push(numericPrice);
+            }
+        }
+
+        return prices;
     }
+
+    async getProductPriceByName(productName: string): Promise<number> {
+    const priceText = await this.getProductPriceLocator(productName).innerText();
+
+    return Number(priceText.replace('$', ''));
+}
 }
