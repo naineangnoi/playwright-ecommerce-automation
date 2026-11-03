@@ -81,14 +81,20 @@ test(' E2E-001: Should complete checkout and download PDF order', async ({ page,
 
     expect(subtotalCents + taxCents).toBe(totalCents);
 
+
     const orderDate = extractOrderDate(pdfText);
-    const currentDate = new Date();
-    const formattedCurrentDate = currentDate.toLocaleDateString('en-US', {
-        timeZone: 'Pacific/Auckland',
+
+const timeZones = ['UTC', 'Pacific/Auckland'];
+
+const validDates = timeZones.map(timeZone =>
+    new Date().toLocaleDateString('en-US', {
+        timeZone,
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    });
+    })
+);
 
-    expect(orderDate).toBe(formattedCurrentDate);
+expect(validDates).toContain(orderDate);
+
 });

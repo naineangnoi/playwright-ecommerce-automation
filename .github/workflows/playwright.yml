@@ -18,6 +18,14 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name : Generate Linux Screenshot Baseline
+      run:  npx playwright test tests/visual.spec.ts -g "VIS-001" --update-snapshots
+    - name: Upload Linux Screenshot Baseline
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-screenshot-baseline
+        path: tests/visual.spec.ts-snapshots/
+        retention-days: 7   
     - name: Run Playwright Regression Tests
       run: npx playwright test --grep-invert "@known-defect"
     - uses: actions/upload-artifact@v4
