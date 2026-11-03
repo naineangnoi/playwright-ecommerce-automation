@@ -84,7 +84,7 @@ test(' E2E-001: Should complete checkout and download PDF order', async ({ page,
     const orderDate = extractOrderDate(pdfText);
     const currentDate = new Date();
     const formattedCurrentDate = currentDate.toLocaleDateString('en-US', {
-        timeZone: 'UTC',
+        timeZone: 'Pacific/Auckland',
         year: 'numeric',
         month: 'long',
         day: 'numeric'

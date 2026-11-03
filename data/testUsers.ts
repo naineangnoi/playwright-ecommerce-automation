@@ -15,4 +15,13 @@ export const testUsers = {
         username: 'performance_glitch_user',
         password: 'secret_sauce',
     },
+    errorUser: {
+        username: 'error_user',
+        password: 'secret_sauce',   
+    },
+    visualUser: {
+        username: 'visual_user',
+        password: 'secret_sauce',
+    }
+
 };
