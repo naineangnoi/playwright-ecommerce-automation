@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import 'dotenv/config';
 import { UserApi } from '../../api/UserApi';
+import type { User } from '../../types/User';
+import { createTestUser} from '../../data/userFactory';
 
 test.describe('API Tests', () => {
 
@@ -40,12 +42,7 @@ test('API-002: Get user by ID', async ({ request }) => {
 
     const userApi = new UserApi(request, token);
 
-    const newUser = {
-        name: 'Test User',
-        email: `test${crypto.randomUUID()}@example.com`,
-        gender: 'male',
-        status: 'active'
-    };
+    const newUser = createTestUser();
 
     let userId: number | undefined;
 
@@ -112,12 +109,7 @@ test('API-002: Get user by ID', async ({ request }) => {
 
         const userApi = new UserApi(request,token);
 
-        const newUser = {
-            name: 'John Doe',
-            email: `johndoe${Date.now()}@example.com`,
-            gender: 'male',
-            status: 'active'
-        };
+        const newUser = createTestUser();
 
         let userId: number | undefined;
 
@@ -156,16 +148,9 @@ test('API-002: Get user by ID', async ({ request }) => {
 
         const userApi = new UserApi(request,token);
 
-        const newUser = {
-            name: 'Jane Smith',
-            email: `janesmith${Date.now()}@example.com`,
-            gender: 'female',
-            status: 'active'
-        };
+        const newUser = createTestUser();
 
         let userId: number | undefined;
-
-        const baseUrl = 'https://gorest.co.in/public/v2/users';
 
         try {
         const createResponse = await userApi.createUser(newUser);
@@ -216,12 +201,7 @@ test('API-006: Update user using Patch', async ({ request }) => {
 
     const baseUrl = 'https://gorest.co.in/public/v2/users';
 
-    const newUser = {
-        name: 'Alice Johnson',
-        email: `alicejohnson${Date.now()}@example.com`,
-        gender: 'female',
-        status: 'active'
-    };
+    const newUser = createTestUser();
 
     const headers = {
         'Authorization': `Bearer ${token}`,
@@ -309,12 +289,7 @@ test('API-007: Delete user and verify 404', async ({ request }) => {
         'Content-Type': 'application/json'
     };
 
-    const newUser = {
-        name: 'Bob Williams',
-        email: `bobwilliams${Date.now()}@example.com`,
-        gender: 'male',
-        status: 'active'
-    };
+    const newUser = createTestUser();
 
     let userId: number | undefined;
     let deleted = false;

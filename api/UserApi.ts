@@ -1,5 +1,6 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { promises } from 'node:dns';
+import type { User } from '../types/User';
 
 export class UserApi {
     private readonly baseUrl =
@@ -10,7 +11,7 @@ export class UserApi {
         private readonly token: string
     ) {}
 
-    async createUser(userData: object): Promise<APIResponse> {
+    async createUser(userData: Omit<User, 'id'>): Promise<APIResponse> {
         return this.request.post(this.baseUrl, {
             headers: {
                 Authorization: `Bearer ${this.token}`
