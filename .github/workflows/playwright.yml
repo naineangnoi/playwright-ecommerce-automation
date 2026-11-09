@@ -20,6 +20,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright Regression Tests
       run: npx playwright test --grep-invert "@known-defect"
+      env:
+        GOREST_TOKEN: ${{ secrets.GOREST_TOKEN }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
