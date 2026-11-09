@@ -1,4 +1,7 @@
+
 # Playwright E-Commerce Test Automation Framework
+
+[![Playwright Tests](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml)
 
 An end-to-end test automation project built with **Playwright and TypeScript**, using the [SauceDemo](https://www.saucedemo.com/) e-commerce application.
 
@@ -11,8 +14,8 @@ This project demonstrates practical software quality engineering skills, includi
 | Playwright | Browser automation and end-to-end testing |
 | TypeScript | Test development |
 | Node.js | JavaScript runtime |
-| Page Object Model (POM) | Test maintainability and reusable page interactions |
-| Custom Fixtures | Test setup and reusable page objects |
+| Page Object Model (POM) | Maintainable and reusable page interactions |
+| Custom Fixtures | Reusable test setup and page objects |
 | GitHub Actions | Continuous integration |
 | Git | Version control |
 | PDF Parsing | Order receipt content validation |
@@ -82,13 +85,13 @@ Tests associated with known defects are tagged with `@known-defect`.
 
 The standard regression pipeline excludes these tests to prevent existing, documented issues from blocking unrelated validation.
 
-Known defect tests can be executed separately:
+Run known defect tests separately:
 
 ```bash
 npx playwright test --grep "@known-defect"
 ```
 
-Standard regression execution:
+Run standard regression tests:
 
 ```bash
 npx playwright test --grep-invert "@known-defect"
@@ -112,7 +115,7 @@ Key design principles:
 
 ### Project Structure
 
-Illustrative structure of the main framework components:
+The following illustrates the main framework components:
 
 ```text
 playwright-ecommerce-automation/
@@ -163,7 +166,7 @@ playwright-ecommerce-automation/
 Clone the repository:
 
 ```bash
-git clone https://github.com/naineangnoi/playwright-ecommerce-automation
+git clone https://github.com/naineangnoi/playwright-ecommerce-automation.git
 cd playwright-ecommerce-automation
 ```
 
@@ -240,36 +243,79 @@ Linux baseline screenshots are committed to the repository so GitHub Actions can
 
 Snapshot updates are not performed automatically during normal regression execution.
 
+## Test Execution & Evidence
+
+The framework provides test reports and visual evidence to support defect investigation and regression analysis.
+
+### CI/CD Execution
+
+[View GitHub Actions Test Runs](https://github.com/naineangnoi/playwright-ecommerce-automation/actions)
+
+### Visual Regression Example
+
+A visual comparison between `standard_user` and `visual_user` identified an unexpected product image on the inventory page.
+
+- **Expected:** Correct Sauce Labs Backpack product image
+- **Actual:** An incorrect dog image displayed instead of the backpack
+- **Detection:** Playwright screenshot comparison
+- **Dynamic content:** Product prices masked to reduce false positives
+
+Expected, actual, and difference screenshots can be used as evidence when investigating UI defects.
+
+### Test Reports
+
+Playwright HTML reports provide:
+
+- Test execution results
+- Failure details
+- Screenshots and visual differences
+- Debugging information
+
+Reports are uploaded as GitHub Actions artifacts and can be reviewed after CI execution.
+
 ## Testing Approach
 
-This project applies several practical QA techniques:
+This project applies several practical QA techniques.
 
-**Risk-Based Testing**
+### Risk-Based Testing
 
-Focuses on critical user journeys such as authentication, shopping cart operations, checkout completion, and payment summary calculations.
+Focuses on critical user journeys such as authentication, shopping cart operations, checkout completion, and order summary calculations.
 
-**Data-Driven Testing**
+### Data-Driven Testing
 
 Uses reusable test data to validate multiple authentication scenarios.
 
-**Boundary and Negative Testing**
+### Boundary and Negative Testing
 
 Covers missing credentials, invalid inputs, and restricted user access.
 
-**End-to-End Testing**
+### End-to-End Testing
 
-Validates the complete customer journey from product selection through checkout and receipt generation.
+Validates the customer journey from product selection through checkout and receipt generation.
 
-**Visual Regression Testing**
+### Visual Regression Testing
 
 Identifies unexpected changes to the user interface through screenshot comparison.
 
 ## Future Improvements
 
-Planned areas for further development include:
+### API Test Automation (Planned)
 
-- API testing integration
-- Cross-browser regression coverage
+Extend the existing Playwright TypeScript framework with API testing using Playwright's built-in `APIRequestContext`.
+
+Planned coverage:
+
+- GET, POST, PUT/PATCH, and DELETE requests
+- HTTP status code and response body validation
+- JSON schema validation
+- Positive and negative API test scenarios
+- Authentication and error handling
+- API and UI integration testing
+- API regression execution in GitHub Actions
+
+### Additional Enhancements
+
+- Cross-browser regression testing
 - Expanded negative checkout scenarios
 - Improved test reporting and diagnostics
 - Additional CI/CD execution strategies

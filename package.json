@@ -23,5 +23,8 @@
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^6.5.438",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9"
   }
 }
