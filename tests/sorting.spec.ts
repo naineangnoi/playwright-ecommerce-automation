@@ -1,4 +1,4 @@
-import {test,expect} from '../fixtures/testfixture';
+import {test,expect} from '../fixtures/testFixture';
 import {LoginPage} from '../pages/LoginPage';       
 import {ProductPage} from '../pages/ProductPage';
 

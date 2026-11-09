@@ -1,5 +1,5 @@
 import { testUsers } from '../data/testUsers';
-import { test , expect } from '../fixtures/testfixture'; 
+import { test , expect } from '../fixtures/testFixture';
 import { ProductPage } from '../pages/ProductPage';
 
 const expectedProducts = {
@@ -14,7 +14,7 @@ const expectedProducts = {
 test('VIS-001: Verify Inventory Page baseline', async ({  page,loginPage }) => {
 
     await loginPage.login(testUsers.standardUser.username, testUsers.standardUser.password);
-    
+
     const productPage = new ProductPage(page);
     await expect(page).toHaveURL(/inventory.html/);
     await expect(productPage.backpackProductName).toBeVisible();

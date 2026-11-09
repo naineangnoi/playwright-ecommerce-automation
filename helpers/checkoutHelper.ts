@@ -1,6 +1,6 @@
 import { ProductPage } from '../pages/ProductPage';
 import { CartPage } from '../pages/CartPage';
-import { expect } from '../fixtures/testfixture';
+import { expect } from '../fixtures/testFixture';
 
 export async function navigateToCart(
     productPage: ProductPage,

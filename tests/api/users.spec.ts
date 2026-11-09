@@ -1,23 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/apiFixture';
 import 'dotenv/config';
-import { UserApi } from '../../api/UserApi';
-import type { User } from '../../types/User';
 import { createTestUser} from '../../data/userFactory';
 
 test.describe('API Tests', () => {
 
-test('API-001: Get existing user', async ({ request }) => {
-    
-    const token = process.env.GOREST_TOKEN
+test('API-001: Get existing user', async ({ userApi }) => {
 
-    if (!token){
-        throw new Error('GOREST_TOKEN is not defines');
-    }
-
-    const userApi = new UserApi(request, token
-
-    )
-    const response = await userApi.getUsers();
+        const response = await userApi.getUsers();
 
         expect(response.status()).toBe(200);
 
@@ -32,15 +21,8 @@ test('API-001: Get existing user', async ({ request }) => {
         }
     });
 
-   
-test('API-002: Get user by ID', async ({ request }) => {
-    const token = process.env.GOREST_TOKEN;
 
-    if (!token) {
-        throw new Error('GOREST_TOKEN is not defined');
-    }
-
-    const userApi = new UserApi(request, token);
+test('API-002: Get user by ID', async ({ userApi }) => {
 
     const newUser = createTestUser();
 
@@ -81,33 +63,17 @@ test('API-002: Get user by ID', async ({ request }) => {
 });
 
 
-    test('API-003: Get non-existing user', async ({ request }) => {
-
-        const token = process.env.GOREST_TOKEN;
-
-        if (!token) {
-        throw new Error('GOREST_TOKEN is not defined');
-        }
-
-        const userApi = new UserApi(request, token);
+    test('API-003: Get non-existing user', async ({ userApi }) => {
 
         const nonExistingUserId = 999999;
         const response = await userApi.getUser(nonExistingUserId)
         expect(response.status()).toBe(404);
 
         const errorResponse = await response.json();
-        expect(errorResponse.message).toBe('Resource not found');   
+        expect(errorResponse.message).toBe('Resource not found');
     });
 
-    test('API-004: Create a new user', async ({ request }) => {
-
-        const token = process.env.GOREST_TOKEN;
-
-        if (!token) {
-            throw new Error('GOREST_TOKEN is not defined in the environment variables.');
-        }
-
-        const userApi = new UserApi(request,token);
+    test('API-004: Create a new user', async ({ userApi }) => {
 
         const newUser = createTestUser();
 
@@ -115,8 +81,8 @@ test('API-002: Get user by ID', async ({ request }) => {
 
         try {
         const response = await userApi.createUser(newUser);
-        
-        expect(response.status()).toBe(201);    
+
+        expect(response.status()).toBe(201);
 
         const body = await response.json();
         userId = body.id;
@@ -138,15 +104,7 @@ test('API-002: Get user by ID', async ({ request }) => {
     }
     });
 
-    test('API-005: Verify user creation', async ({ request }) => {
-
-        const token = process.env.GOREST_TOKEN;         
-
-        if (!token) {
-            throw new Error('GOREST_TOKEN is not defined in the environment variables.');
-        }
-
-        const userApi = new UserApi(request,token);
+    test('API-005: Verify user creation', async ({ userApi }) => {
 
         const newUser = createTestUser();
 
@@ -167,11 +125,6 @@ test('API-002: Get user by ID', async ({ request }) => {
 
         const getResponse = await userApi.getUser(createdUserId);
 
-        console.log('Created User ID:', createdUserId);
-        console.log('GET URL:', getResponse.url());
-        console.log('GET Status:', getResponse.status());
-        console.log('GET Body:', await getResponse.text());
-
         expect(getResponse.status()).toBe(200);
         expect(typeof createdUserId).toBe('number');
         expect(createdUserId).toBeGreaterThan(0);
@@ -183,7 +136,7 @@ test('API-002: Get user by ID', async ({ request }) => {
             gender: newUser.gender,
             status: newUser.status
         });
-        }finally{ 
+        }finally{
         if (userId !== undefined) {
             const deleteResponse = await userApi.deleteUser(userId);
             expect(deleteResponse.status()).toBe(204);
@@ -191,38 +144,22 @@ test('API-002: Get user by ID', async ({ request }) => {
     }
 });
 
-test('API-006: Update user using Patch', async ({ request }) => {
-
-    const token = process.env.GOREST_TOKEN;
-
-    if (!token) {
-        throw new Error('GOREST_TOKEN is not defined in the environment variables.');
-    }
-
-    const baseUrl = 'https://gorest.co.in/public/v2/users';
-
-    const newUser = createTestUser();
-
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+test('API-006: Update user using Patch', async ({ userApi }) => {
 
     let userId: number | undefined;
 
     try {
         // Step 1: POST - Create User
-        const createResponse = await request.post(baseUrl, {
-            headers: headers,
-            data: newUser
-        });
+        const newUser = createTestUser();
+        const createResponse = await userApi.createUser(newUser);
 
         expect(createResponse.status()).toBe(201);
 
         const createdUser = await createResponse.json();
-        const createUserId: number = createdUser.id;
+        userId= createdUser.id;
 
-        expect(createUserId).toBeGreaterThan(0);
+        expect(typeof userId).toBe('number');
+        expect(userId).toBeGreaterThan(0);
         userId = createdUser.id;
 
         expect(typeof userId).toBe('number');
@@ -232,9 +169,8 @@ test('API-006: Update user using Patch', async ({ request }) => {
         }
 
         // Step 2: PATCH - Update status
-        const userApi = new UserApi(request, token)
         const patchResponse = await userApi.updateUser(
-            createUserId,
+            userId,
             { status: 'inactive' }
         );
 
@@ -250,7 +186,7 @@ test('API-006: Update user using Patch', async ({ request }) => {
         });
 
         // Step 3: GET - Verify Update
-        const getResponse = await userApi.getUser(createUserId);
+        const getResponse = await userApi.getUser(userId);
 
         expect(getResponse.status()).toBe(200);
 
@@ -265,7 +201,6 @@ test('API-006: Update user using Patch', async ({ request }) => {
     } finally {
         // Cleanup: DELETE - Remove User
         if (userId !== undefined) {
-            const userApi = new UserApi(request, token)
             const deleteResponse = await userApi.deleteUser(userId);
 
             expect(deleteResponse.status()).toBe(204);
@@ -273,27 +208,13 @@ test('API-006: Update user using Patch', async ({ request }) => {
     }
 });
 
-test('API-007: Delete user and verify 404', async ({ request }) => {
-
-    const token = process.env.GOREST_TOKEN;
-    if (!token) {
-        throw new Error('GOREST_TOKEN is not defined in the environment variables.');
-    }
-
-    const userApi = new UserApi(request, token);
-
-    const baseUrl = 'https://gorest.co.in/public/v2/users';
-
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+test('API-007: Delete user and verify 404', async ({ userApi }) => {
 
     const newUser = createTestUser();
 
     let userId: number | undefined;
     let deleted = false;
-    
+
     try {
         // Step 1: Create User
         const createUser = await userApi.createUser(newUser);
@@ -309,16 +230,14 @@ test('API-007: Delete user and verify 404', async ({ request }) => {
         userId = createUserId;
 
         // Step 2: Delete User
-        const deleteResponse = await request.delete(`${baseUrl}/${userId}`, {headers});
+        const deleteResponse = await userApi.deleteUser(userId);
 
         expect(deleteResponse.status()).toBe(204);
         deleted = true;
 
         // Step 3: Verify Deletion
-        const getResponse = await userApi.getUser(createUserId);
+        const getResponse = await userApi.getUser(userId);
         expect(getResponse.status()).toBe(404);
-
-        deleted = true;
 
         const errorResponse = await getResponse.json();
         expect(errorResponse.message).toBe('Resource not found');
@@ -326,9 +245,9 @@ test('API-007: Delete user and verify 404', async ({ request }) => {
     } finally {
         // Cleanup: Ensure user is deleted
         if (userId !== undefined && !deleted) {
-            const deleteResponse = await request.delete(`${baseUrl}/${userId}`, {headers});
+            const deleteResponse = await userApi.deleteUser(userId)
             expect([204, 404]).toContain(deleteResponse.status());
         }
     }
-});         
-}); 
+});
+});

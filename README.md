@@ -1,157 +1,163 @@
-
-# Playwright E-Commerce Test Automation Framework
+# Playwright E-Commerce Automation Framework
 
 [![Playwright Tests](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml)
 
-An end-to-end test automation project built with **Playwright and TypeScript**, using the [SauceDemo](https://www.saucedemo.com/) e-commerce application.
+A test automation portfolio project built with **Playwright and TypeScript**, demonstrating UI automation, REST API testing, reusable test architecture, data validation, visual regression testing, and CI/CD integration.
 
-This project demonstrates practical software quality engineering skills, including test framework design, functional testing, end-to-end workflows, PDF validation, visual regression testing, and CI/CD integration.
+The framework focuses on maintainability, test reliability, risk-based coverage, and clear separation of responsibilities.
 
 ## Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| Playwright | Browser automation and end-to-end testing |
-| TypeScript | Test development |
-| Node.js | JavaScript runtime |
-| Page Object Model (POM) | Maintainable and reusable page interactions |
-| Custom Fixtures | Reusable test setup and page objects |
-| GitHub Actions | Continuous integration |
-| Git | Version control |
-| PDF Parsing | Order receipt content validation |
+- **Language:** TypeScript
+- **Test Framework:** Playwright Test
+- **Design Patterns:** Page Object Model (POM), Custom Fixtures
+- **API Testing:** Playwright APIRequestContext, REST APIs
+- **Test Data:** TypeScript interfaces and reusable data factories
+- **Validation:** UI assertions, API response validation, PDF content validation
+- **Visual Testing:** Playwright screenshot comparisons
+- **CI/CD:** GitHub Actions
+- **Version Control:** Git and GitHub
 
 ## Test Coverage
 
-### 1. Login and Authentication
+### UI Automation — SauceDemo
 
-- Successful login with valid credentials
-- Invalid username and password
-- Empty username and password validation
-- Locked-out user validation
+Automated end-to-end testing of the [SauceDemo](https://www.saucedemo.com/) application.
+
+Coverage includes:
+
+- Successful and unsuccessful login scenarios
+- Required-field validation and locked-out users
 - Logout functionality
-- Login behaviour for special users, including `performance_glitch_user`, `problem_user`, `error_user`, and `visual_user`
+- Adding and removing products from the shopping cart
+- Product sorting by price
+- Checkout workflow validation
+- PDF order receipt validation
+- Visual regression testing
 
-### 2. Product Inventory
+The UI framework uses the **Page Object Model** to separate page interactions from test assertions and improve maintainability.
 
-- Verify product inventory page
-- Add products to the shopping cart
-- Remove products from the cart
-- Verify cart badge updates
-- Sort products by price (low to high and high to low)
-- Validate product price data
+### REST API Automation — GoREST
 
-### 3. Shopping Cart and Checkout
+Automated API testing against the [GoREST](https://gorest.co.in/) public REST API.
 
-- Add multiple products to the cart
-- Verify product names and quantities
-- Complete checkout information
-- Validate checkout order summary
-- Complete the purchase workflow
-- Verify order confirmation
+| Test ID | Scenario | Method |
+|---|---|---|
+| API-001 | Retrieve users and validate response structure | GET |
+| API-002 | Create a user and retrieve it by ID | POST, GET |
+| API-003 | Verify 404 response for a nonexistent user | GET |
+| API-004 | Create a user and validate response data | POST |
+| API-005 | Verify persistence of newly created user data | POST, GET |
+| API-006 | Update user status and verify persisted changes | POST, PATCH, GET |
+| API-007 | Delete a user and verify it is no longer accessible | POST, DELETE, GET |
 
-### 4. PDF Order Receipt Validation
+**API testing practices:**
 
-Automated validation of the downloadable PDF receipt after checkout.
+- HTTP status code validation
+- Response body and data integrity assertions
+- Positive and negative test scenarios
+- CRUD workflow validation
+- Independent test data generation
+- Cleanup using `try...finally`
+- Reusable API client methods
+- Environment-based authentication
+- Custom Playwright API fixtures
 
-Validation includes:
+## Framework Architecture
+### UI Custom Fixture
 
-- Successful PDF download
-- PDF file format and non-empty content
-- Order receipt text
-- Purchased product names
-- Subtotal, tax, and total amounts
-- Arithmetic consistency between subtotal, tax, and total
-- Order date validation
+`fixtures/testFixture.ts` provides reusable page objects and shared UI test setup, reducing duplicated initialization code across UI test scenarios.
 
-The PDF tests use reusable helper functions for extracting and validating receipt information.
+### Page Object Model
 
-### 5. Visual Regression Testing
+Page objects encapsulate UI locators and reusable page interactions, keeping tests focused on business scenarios and expected results.
 
-Visual regression tests compare screenshots against approved baseline images to detect unintended UI changes.
+### Reusable API Client
 
-Features include:
+`api/UserApi.ts` encapsulates GoREST API operations:
 
-- Screenshot comparison using Playwright
-- Separate baselines for supported execution environments
-- Masking dynamic product prices
-- Detection of unexpected product image and layout changes
-- Screenshot comparison reports for investigating visual differences
+- `getUsers()`
+- `getUser()`
+- `createUser()`
+- `updateUser()`
+- `deleteUser()`
 
-**Example:** Visual testing identified an unexpected product image displayed for the Sauce Labs Backpack when using `visual_user`.
+This reduces duplication of HTTP request logic, endpoint URLs, and authentication configuration.
 
-### 6. Known Defect Management
+### Custom API Fixture
 
-Tests associated with known defects are tagged with `@known-defect`.
+`fixtures/apiFixture.ts` extends Playwright's built-in `test` fixture to provide an initialized `userApi` instance.
 
-The standard regression pipeline excludes these tests to prevent existing, documented issues from blocking unrelated validation.
+```typescript
+test('API-001: Get existing user', async ({ userApi }) => {
+  const response = await userApi.getUsers();
 
-Run known defect tests separately:
-
-```bash
-npx playwright test --grep "@known-defect"
+  expect(response.status()).toBe(200);
+});
 ```
 
-Run standard regression tests:
+The fixture centralizes API client initialization and token validation, allowing tests to focus on behavior and assertions.
 
-```bash
-npx playwright test --grep-invert "@known-defect"
+### Test Data Factory
+
+`data/userFactory.ts` generates unique user data for API tests.
+
+```typescript
+const newUser = createTestUser();
 ```
 
-Known defects should be reviewed and reintroduced into the regular regression suite once resolved.
+This reduces hardcoded test data and helps prevent conflicts between test executions.
 
-## Framework Design
+### TypeScript Data Models
 
-The framework follows the **Page Object Model (POM)** design pattern to separate test scenarios from page interactions and locators.
+`types/User.ts` defines the user data structure, supporting type safety and consistent API client contracts.
 
-Key design principles:
+## Project Structure
 
-- Reusable page objects
-- Centralised locators
-- Custom Playwright fixtures
-- Separation of test data and test logic
-- Reusable helper functions
-- Playwright auto-waiting and web-first assertions
-- Clear test naming and scenario identification
-
-### Project Structure
-
-The following illustrates the main framework components:
+Key framework components:
 
 ```text
 playwright-ecommerce-automation/
-│
 ├── .github/
 │   └── workflows/
 │       └── playwright.yml
-│
+├── api/
+│   └── UserApi.ts
 ├── data/
+│   ├── invalidLoginData.ts
 │   ├── testUsers.ts
-│   └── invalidLoginData.ts
-│
+│   └── userFactory.ts
 ├── fixtures/
-│   └── testfixture.ts
-│
+│   ├── apiFixture.ts
+│   └── testFixture.ts
 ├── helpers/
 │   ├── checkoutHelper.ts
 │   └── pdfHelper.ts
-│
 ├── pages/
-│   ├── LoginPage.ts
-│   ├── ProductPage.ts
 │   ├── CartPage.ts
+│   ├── CheckoutCompletePage.ts
+│   ├── CheckoutOverviewPage.ts
 │   ├── CheckoutPage.ts
-│   └── CheckoutOverviewPage.ts
-│
+│   ├── LoginPage.ts
+│   └── ProductPage.ts
 ├── tests/
-│   ├── login.spec.ts
+│   ├── api/
+│   │   └── users.spec.ts
+│   ├── cart.spec.ts
+│   ├── checkout.spec.ts
 │   ├── e2e.spec.ts
-│   ├── visual.spec.ts
-│   └── visual.spec.ts-snapshots/
-│
-├── playwright.config.ts
+│   ├── login.spec.ts
+│   ├── sorting.spec.ts
+│   └── visual.spec.ts
+├── types/
+│   └── User.ts
+├── .gitignore
 ├── package.json
+├── playwright.config.ts
 └── README.md
 ```
+
+The repository also contains UI test fixtures, page objects, and supporting utilities for end-to-end testing.
 
 ## Getting Started
 
@@ -160,6 +166,7 @@ playwright-ecommerce-automation/
 - Node.js
 - npm
 - Git
+- A GoREST API access token for authenticated API operations
 
 ### Installation
 
@@ -182,7 +189,19 @@ Install Playwright browsers:
 npx playwright install
 ```
 
-### Run Tests
+### API Authentication
+
+Create a `.env` file in the project root:
+
+```env
+GOREST_TOKEN=your_gorest_api_token
+```
+
+The API fixture reads the token from the environment and uses it to initialize the API client.
+
+**Security:** The `.env` file is excluded from version control. API credentials must not be committed to GitHub.
+
+## Running Tests
 
 Run all tests:
 
@@ -190,142 +209,77 @@ Run all tests:
 npx playwright test
 ```
 
-Run regression tests excluding known defects:
+Run API tests:
 
 ```bash
-npx playwright test --grep-invert "@known-defect"
+npx playwright test tests/api/users.spec.ts
 ```
 
-Run a specific test file:
+Run a specific API scenario:
 
 ```bash
-npx playwright test tests/login.spec.ts
+npx playwright test tests/api/users.spec.ts --grep "API-006"
 ```
 
-Run tests with a visible browser:
+Run TypeScript validation:
 
 ```bash
-npx playwright test --headed
+npx tsc --noEmit
 ```
 
-Run tests using the Playwright UI:
-
-```bash
-npx playwright test --ui
-```
-
-View the HTML report:
+View the Playwright HTML report:
 
 ```bash
 npx playwright show-report
 ```
 
-## CI/CD Integration
+## CI/CD — GitHub Actions
 
-The project uses **GitHub Actions** to automatically execute Playwright regression tests.
+The project uses GitHub Actions to execute automated tests in CI.
 
-The CI workflow includes:
+The workflow:
 
-1. Checkout repository source code
-2. Set up Node.js
-3. Install project dependencies
-4. Install Playwright browsers and required system dependencies
-5. Execute regression tests
-6. Upload the Playwright HTML report as a build artifact
+- Installs project dependencies and Playwright browsers
+- Executes the configured regression test suite
+- Excludes tests tagged `@known-defect` from the standard regression run
+- Runs API tests using a securely configured `GOREST_TOKEN` repository secret
+- Uploads the Playwright HTML report as a workflow artifact
 
-The regression pipeline excludes tests tagged with `@known-defect`.
+This provides automated feedback on test execution and helps identify regressions after code changes.
 
-### Visual Testing in CI
+## Test Strategy and Quality Practices
 
-Screenshot baselines are maintained for the relevant operating systems.
+The framework demonstrates several software quality engineering practices.
 
-Linux baseline screenshots are committed to the repository so GitHub Actions can compare actual screenshots against approved expected results.
+**Risk-based testing:** Prioritizing critical user journeys such as authentication, cart operations, checkout, and API data integrity.
 
-Snapshot updates are not performed automatically during normal regression execution.
+**Positive and negative testing:** Validating both successful operations and expected error handling.
 
-## Test Execution & Evidence
+**Test independence:** Generating unique API test data to minimize dependencies between scenarios.
 
-The framework provides test reports and visual evidence to support defect investigation and regression analysis.
+**Test data cleanup:** Using `try...finally` to remove created records even when assertions fail.
 
-### CI/CD Execution
+**Maintainability:** Separating page objects, API clients, fixtures, test data, and assertions.
 
-[View GitHub Actions Test Runs](https://github.com/naineangnoi/playwright-ecommerce-automation/actions)
+**Known defect management:** Using the `@known-defect` tag to distinguish documented application defects from the standard passing regression suite.
 
-### Visual Regression Example
+**Visual regression:** Using screenshot comparisons to detect unintended UI changes.
 
-A visual comparison between `standard_user` and `visual_user` identified an unexpected product image on the inventory page.
-
-- **Expected:** Correct Sauce Labs Backpack product image
-- **Actual:** An incorrect dog image displayed instead of the backpack
-- **Detection:** Playwright screenshot comparison
-- **Dynamic content:** Product prices masked to reduce false positives
-
-Expected, actual, and difference screenshots can be used as evidence when investigating UI defects.
-
-### Test Reports
-
-Playwright HTML reports provide:
-
-- Test execution results
-- Failure details
-- Screenshots and visual differences
-- Debugging information
-
-Reports are uploaded as GitHub Actions artifacts and can be reviewed after CI execution.
-
-## Testing Approach
-
-This project applies several practical QA techniques.
-
-### Risk-Based Testing
-
-Focuses on critical user journeys such as authentication, shopping cart operations, checkout completion, and order summary calculations.
-
-### Data-Driven Testing
-
-Uses reusable test data to validate multiple authentication scenarios.
-
-### Boundary and Negative Testing
-
-Covers missing credentials, invalid inputs, and restricted user access.
-
-### End-to-End Testing
-
-Validates the customer journey from product selection through checkout and receipt generation.
-
-### Visual Regression Testing
-
-Identifies unexpected changes to the user interface through screenshot comparison.
+**CI/CD integration:** Executing automated regression checks through GitHub Actions.
 
 ## Future Improvements
 
-### API Test Automation (Planned)
+Planned enhancements include:
 
-Extend the existing Playwright TypeScript framework with API testing using Playwright's built-in `APIRequestContext`.
-
-Planned coverage:
-
-- GET, POST, PUT/PATCH, and DELETE requests
-- HTTP status code and response body validation
-- JSON schema validation
-- Positive and negative API test scenarios
-- Authentication and error handling
-- API and UI integration testing
-- API regression execution in GitHub Actions
-
-### Additional Enhancements
-
-- Cross-browser regression testing
-- Expanded negative checkout scenarios
+- API response schema validation
+- Additional negative API test scenarios
+- Data-driven API testing
+- Expanded cross-browser coverage
 - Improved test reporting and diagnostics
-- Additional CI/CD execution strategies
+- Additional end-to-end business workflows
 
 ## Project Purpose
 
-This project was developed as a hands-on automation portfolio to demonstrate practical experience in designing, implementing, maintaining, and integrating automated software tests.
+This repository is a hands-on automation engineering project demonstrating practical application of Playwright, TypeScript, reusable framework design, UI and REST API testing, and CI/CD practices.
 
-The focus is on building a maintainable, scalable, and reliable test automation framework that supports continuous quality improvement.
-
----
-
-**Built with Playwright, TypeScript, and a quality engineering mindset.**
+It reflects an ongoing focus on building reliable, scalable, and maintainable test automation solutions.

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/testfixture';  
+import { test, expect } from '../fixtures/testFixture';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
 import { CheckoutOverviewPage } from '../pages/CheckoutOverviewPage';
@@ -12,19 +12,19 @@ test(' E2E-001: Should complete checkout and download PDF order', async ({ page,
     const checkoutPage = new CheckoutPage(page);
     const checkoutOverviewPage = new CheckoutOverviewPage(page);
 
-    const products = ['Sauce Labs Backpack', 
-        'Sauce Labs Bike Light', 
+    const products = ['Sauce Labs Backpack',
+        'Sauce Labs Bike Light',
         'Sauce Labs Bolt T-Shirt'];
 
     for (const product of products) {
         await productPage.addProductToCart(product);
     }
-    
+
     await expect(productPage.cartBadge).toHaveText('3');
     await productPage.viewCart();
     await expect(page).toHaveURL(/cart.html/);
     await expect(cartPage.productName).toHaveCount(3);
-    await expect(cartPage.productName).toHaveText(products)  
+    await expect(cartPage.productName).toHaveText(products)
 
     await cartPage.proceedToCheckout();
     await expect(page).toHaveURL(/checkout-step-one\.html/);
@@ -65,11 +65,11 @@ test(' E2E-001: Should complete checkout and download PDF order', async ({ page,
     const subTotal = extractAmount(orderSummary.subtotal);
     const tax = extractAmount(orderSummary.tax);
     const total = extractAmount(orderSummary.total);
-    
+
     expectPdfAmount(pdfText, 'Item total', subTotal);
     expectPdfAmount(pdfText, 'Tax', tax);
     expectPdfAmount(pdfText, 'Total', total);
-    
+
 
     const subTotalAmount = Number(subTotal);
     const taxAmount = Number(tax);

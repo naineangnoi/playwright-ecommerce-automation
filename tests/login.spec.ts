@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/testfixture';
+import { test, expect } from '../fixtures/testFixture';
 import { testUsers } from '../data/testUsers';
 import { ProductPage } from '../pages/ProductPage';
 import { invalidLoginData } from '../data/invalidLoginData';
