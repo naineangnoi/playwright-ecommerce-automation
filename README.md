@@ -1,6 +1,6 @@
 # Playwright E-Commerce Automation Framework
 
-[![Playwright Tests](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/naineangnoi/playwright-ecommerce-automation/actions/workflows/playwright.yml)
+[![Playwright Tests](https://github.com/nootsara-intapun/playwright-ecommerce-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/nootsara-intapun/playwright-ecommerce-automation/actions/workflows/playwright.yml)
 
 A test automation portfolio project built with **Playwright and TypeScript**, demonstrating UI automation, REST API testing, reusable test architecture, data validation, visual regression testing, and CI/CD integration.
 
@@ -173,7 +173,7 @@ The repository also contains UI test fixtures, page objects, and supporting util
 Clone the repository:
 
 ```bash
-git clone https://github.com/naineangnoi/playwright-ecommerce-automation.git
+git clone https://github.com/nootsara-intapun/playwright-ecommerce-automation.git
 cd playwright-ecommerce-automation
 ```
 
